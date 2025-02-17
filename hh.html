@@ -28,7 +28,7 @@
             margin-bottom: 20px;
         }
         .logo img {
-            max-width: 150px; /* Adjust the size of the logo */
+            max-width: 150px;
             height: auto;
         }
         h1 {
@@ -85,6 +85,7 @@
             word-wrap: break-word;
             overflow-y: auto;
             max-height: 300px;
+            white-space: pre-wrap; /* Preserve line breaks */
         }
     </style>
 </head>
@@ -97,7 +98,7 @@
     </div>
     <h1>Text Repeater</h1>
     <div class="input-group">
-        <input type="text" id="textInput" placeholder="Enter text">
+        <input type="text" id="textInput" placeholder="Enter text (e.g., [RANDOM])">
         <input type="number" id="repeatCount" placeholder="Repeat count">
     </div>
     <div class="button-group">
@@ -114,12 +115,20 @@
         let result = '';
 
         if (text && count > 0) {
-            result = text.repeat(count);
+            // Repeat the text the specified number of times
+            const repeatedText = text.repeat(count);
+
+            // Split the repeated text into chunks of 9
+            const chunkSize = 9;
+            for (let i = 0; i < repeatedText.length; i += chunkSize * text.length) {
+                const chunk = repeatedText.slice(i, i + chunkSize * text.length);
+                result += chunk.match(new RegExp(`.{1,${text.length}}`, 'g')).join('') + '\n';
+            }
         } else {
             result = 'Please enter valid text and a positive number.';
         }
 
-        document.getElementById('result').innerText = result;
+        document.getElementById('result').innerText = result.trim();
     }
 
     function copyResult() {
